@@ -1,0 +1,4 @@
+col1,col2,col3,txt
+1,1,0,meaningful text
+5,9,7,trees
+7,8,2,text
