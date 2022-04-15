@@ -14,7 +14,6 @@ import logging
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-
 # nltk.download('stopwords') uncomment if the package is not installed
 
 # Etsy auth
@@ -44,19 +43,18 @@ class RawLabels(Enum):
 
 # column names for the final tale (after cleaning and processing)
 class Labels(Enum):
-    CREATION_DATE = "original_creation_tsz"
     PRICE = "price"
     TAXONOMY_ID = "taxonomy_id"
+    FEATURED_RANK = "featured_rank"
     MATERIALS_DIST_FROM_TITLE = "materials_dist"
     STYLE_DIST_FROM_TITLE = "style_dist"
     TAGS_DIST_FROM_TITLE = "tags_dist"
-    FEATURED_RANK = "featured_rank"
-    WHO_MADE = "who_made"
+    HANDMADE = "handmade"
     IS_CUSTOMIZABLE = "is_customizable"
     IS_DIGITAL = "is_digital"
-    SELLABILITY1 = "sellability_1"
-    SELLABILITY2 = "sellability_2"
-    POSSIBLE_SELL_INCOME = "possible_sell_income"
+    FEATURE = "features"
+    SALEABILITY1 = "saleability_1"
+    SALEABILITY2 = "saleability_2"
 
 
 def get_art_taxonomy(dic, node):
@@ -132,12 +130,14 @@ def get_data(table_path="./listing.csv"):
                 time.sleep(60)
 
 
-def get_raw_df(path="./listing.csv", labels = [k.value for k in RawLabels]):
+def get_raw_df(path="./listing.csv", labels=None):
     """
     Create a pandas dataframe from the csv raw table, and putting the rights labels
     :param path: path of the csv file with the data
     :return: the pandas dataframe obtained
     """
+    if labels is None:
+        labels = [k.value for k in RawLabels]
     df = pd.read_csv(filepath_or_buffer=path, encoding_errors="ignore", sep=";")
     df.columns = labels
     return df
@@ -164,20 +164,23 @@ def cosine_dist(str1, str2):
     :param str2: 2nd string
     :return: float (the cosine)
     """
-    doc = [str(str1), str(str2)]
+    if (str1 == []):
+        return -2.0
+    doc = [str("".join(str1)), str(str2)]
     try:
         vect = TfidfVectorizer().fit_transform(doc)
         cosine = cosine_similarity(vect)
-        return cosine[0][1]
+        return float(cosine[0][1])
     except ValueError as e:
-        return -1
+        return -1.0
 
 
-def add_tfid(text_column):
-    v = TfidfVectorizer() # add some parameter to the function ?
-    x = v.fit_transform(text_column)
-    df1 = pd.DataFrame(x.toarray(), columns=v.get_feature_names())
-    return df1
-
-
-
+def get_countvectorizer(tup):
+    tup = eval(str(tup))  # be sure is a tuple
+    res = []
+    for i in range(int(tup[0])):
+        if i in tup[1]:
+            res.append(tup[2][tup[1].index(i)])
+        else:
+            res.append(0.0)
+    return res

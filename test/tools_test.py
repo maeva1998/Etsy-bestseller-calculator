@@ -8,8 +8,10 @@ class MyTestCase(unittest.TestCase):
         string = "Hi, how are you? how are things  going? I feel sick but happy"
         clean_string = "hi thing go feel sick happi"
 
-        string2 = "Valentines Wine SVG, Valentine&#39;s Day Wine Bag SVG, Valentines Wine Glass SVG, Valentines Wine Label Png Svg, Wine Tumbler Svg, Digital Files"
-        clean_string2 = "valentin wine svg valentin day wine bag svg valentin wine glass svg valentin wine label png svg wine tumbler svg digit file"
+        string2 = "Valentines Wine SVG, Valentine&#39;s Day Wine Bag SVG, Valentines Wine Glass SVG, Valentines Wine " \
+                  "Label Png Svg, Wine Tumbler Svg, Digital Files "
+        clean_string2 = "valentin wine svg valentin day wine bag svg valentin wine glass svg valentin wine label png " \
+                        "svg wine tumbler svg digit file "
 
         self.assertEqual(clean_string, t.cleaning(string))
         self.assertEqual(clean_string2, t.cleaning(string2))
@@ -64,6 +66,11 @@ class MyTestCase(unittest.TestCase):
         print(final_df)
         print(len(final_df))
         print(len(final_df.columns))
+
+    def get_countvectorizer_test(self):
+        tup = (5, [3,2], [1,5])
+        res = t.get_countvectorizer(tup)
+        self.assertEqual(res, [0, 0, 5, 1, 0])
 
 
 if __name__ == '__main__':

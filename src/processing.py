@@ -17,7 +17,7 @@ def processing(raw_df):
     raw_df = raw_df.dropna(axis=0)
 
     # transform the style and material none column with an empty list
-    tqdm.pandas(desc="treanform NaN values into empty list -> []")
+    tqdm.pandas(desc="transform NaN values into empty list -> []")
     raw_df[RawLabels.MATERIALS.value] = raw_df[RawLabels.MATERIALS.value].progress_apply(
         lambda x: "[]" if (x is None or x == "") else x)
     raw_df[RawLabels.STYLE.value] = raw_df[RawLabels.STYLE.value].progress_apply(
@@ -29,7 +29,7 @@ def processing(raw_df):
     tqdm.pandas(desc="transform who_made column in a true/false column")
     raw_df[Labels.WHO_MADE.value] = raw_df[Labels.WHO_MADE.value].progress_apply((lambda x: 1 if x == "i_did" else 0))
 
-    # add a normalized views/creation_time column and num_favorers/creation_time columns (sellabilities values)
+    # add and normalized views/creation_time column and num_favorers/creation_time columns (sellabilities values)
     tqdm.pandas(desc="Creation of sellability columns")
     raw_df["views_time_ratio"] = \
         raw_df[RawLabels.VIEWS.value] / raw_df[Labels.CREATION_DATE.value]
